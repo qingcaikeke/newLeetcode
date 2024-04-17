@@ -241,11 +241,13 @@ public class L001to020 {
         //因为规划过程中涉及到i-1，j-1，0，m的话会出界
         boolean[][] dp = new boolean[m+1][n+1];
         //初始化较复杂，要注意，已经保证了不会出界，只需把该为true的地方初始化为true
+        //第一行初始
         dp[0][0] = true;//aaa与"ab*a*c*a"
         dp[0][1] = false;
         for(int j=2;j<=n;j++){//题意a*能匹配空，a*b不行
             if(pp[j-1]=='*') dp[0][j] = dp[0][j-2];
         }
+        //第一列初始，一定全是false，所以不用写
         //dp[i][j]：p的[0,j-1]能不能构成s的[0,i-1]个
         for(int i=1;i<=m;i++){
             for (int j=1;j<=n;j++){
@@ -254,7 +256,7 @@ public class L001to020 {
                     //不需要枚举这个组合到底匹配了 sss 中的几个字符
                     //没代表任何元素||匹配s中的一个字符，并把该字符扔掉，p中字符加*的组合可以继续使用
                     if(pp[j-2]=='.'||pp[j-2]==ss[i-1]) dp[i][j] = dp[i][j-2]||dp[i-1][j];
-                    else dp[i][j] = dp[i][j-2];//没代表任何字符
+                    else dp[i][j] = dp[i][j-2];//因为*前面的不匹配，所以只能把他干掉
                 }else dp[i][j] = false;
             }
         }

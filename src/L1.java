@@ -12,6 +12,7 @@ import java.util.*;
  * 416.分割等和子集
  * 486.预测赢家，递归或动态规划
  * 491.非递减子序列
+ * 494.目标和
  * 547.省份数量，显然并查集，感觉深度搜或广度搜也行
  * 628.三个数的最大乘积：排序，数学思想
  * 724.寻找数组的中心下标：前缀和
@@ -19,7 +20,7 @@ import java.util.*;
  * 863.二叉树中所有距离为 K 的结点
  * 976.三角形最大周长：简单贪心+排序，枚举最大的变，然后看nums[i-1]+nums[i-2]
  */
-public class Other {
+public class L1 {
     public class TreeNode {
         int val;
         TreeNode left;
@@ -316,6 +317,47 @@ public class Other {
     public String removeKdigits(String num, int k) {
         return null;
     }
+    //494 目标和
+    public static int findTargetSumWays1(int[] nums, int target) {
+        //a+b=sum,a-b=target a = (sum+target)/2  b = (sum-target)/2
+        int sum = Arrays.stream(nums).sum();
+        if((sum+target) %2 !=0) return 0;
+        target = (sum+target)/2;
+        if(target<0) return 0;//别忘，因为你是要取若干个数前面填+然后求和，所以和必须>=0,否则下面创建dp会越界
+        //模板写法，注意一定是多一行一列，否则边界值容易出问题
+        int[][] dp = new int[nums.length+1][target+1];
+        //第一行：不使用任何元素凑j从0到target，认为只能凑出0，且只有一种方案
+        dp[0][0] = 1;
+        //第一列的初始化
+        //for(int i=1;i<nums.length;i++){
+            //用前i个元素凑target=0;
+            //dp[i][0]
+        //}
+        for(int i=1;i<=nums.length;i++){//用前i个元素，注意小于等于
+            for(int j=0;j<=target;j++){
+                if(j>=nums[i-1]){
+                    dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i-1]];
+                }else {
+                    dp[i][j] = dp[i-1][j];
+                }
+            }
+        }
+        return dp[nums.length][target];
+    }
+    public static int findTargetSumWays2(int[] nums, int target){
+        int sum = Arrays.stream(nums).sum();
+        if((sum+target) %2 !=0) return 0;
+        target = (sum+target)/2;
+        if(target<0) return 0;
+        int[] dp = new int[target+1];
+        dp[0] = 1;
+        for(int i=1;i<=nums.length;i++){
+            for(int j=target;j>=nums[i-1];j--){
+                dp[j] = dp[j]  + dp[j-nums[i-1]];
+            }
+        }
+        return dp[target];
+    }
     //486 预测赢家，没想出来,递归或动态规划
     public boolean predictTheWinner(int[] nums) {
         //1.递归，每轮有两种选则
@@ -343,13 +385,8 @@ public class Other {
         int scoreEnd = nums[end] - dfsPredict(nums, start, end - 1); //这里第二项从加号改为减号。
         return Math.max(scoreStart, scoreEnd); //直接返回最大值就好了，不需要知道当前玩家是谁。
     }
-    //非递减子序列,序列中至少有两个元素，可以不相邻
+    //491 非递减子序列,序列中至少有两个元素，可以不相邻
     //重复元素怎么解决
-    public static void main(String[] args) {
-        int[] nums = new int[]{4,6,7,7,7};
-        List<List<Integer>> res = findSubsequences(nums);
-        System.out.println(res);
-    }
     public static List<List<Integer>> findSubsequences(int[] nums) {
         List<List<Integer>> res = new ArrayList<>();
         dfsFindSub(res,new ArrayList<>(),0,nums);
