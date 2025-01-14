@@ -10,5 +10,6 @@
 空间优化
 
 
-myList.set(0, 100); // 将索引为0的元素设为100// 转换链表为数组
+myList.set(0, 100); // 将索引为0的元素设为100
+// 转换链表为数组
 Integer[] array = linkedList.toArray(new Integer[linkedList.size()]);
